@@ -1,7 +1,7 @@
 package com.api.csv.impl;
 
 import com.api.csv.repository.model.CSV;
-import com.api.csv.repository.model.CsvRepository;
+import com.api.csv.repository.CsvRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;

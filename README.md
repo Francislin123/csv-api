@@ -22,5 +22,6 @@
 
 ### Documentation for testing api
 - To test the listing/statistics
+- The xlsx/csv file is in the root of the project (moviestes.xlsx)
 - Api URI(http://localhost:8080/api/v1/assets/csv/statics) 
 - curl --location 'http://localhost:8080/api/v1/assets/csv/statics' \--header 'Content-Type: application/json'
