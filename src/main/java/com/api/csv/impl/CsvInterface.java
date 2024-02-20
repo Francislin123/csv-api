@@ -1,10 +1,10 @@
 package com.api.csv.impl;
 
-import com.api.csv.repository.model.CSV;
+import com.api.csv.controller.response.CsvResponse;
 
 import java.util.List;
 
 @FunctionalInterface
 public interface CsvInterface {
-    List<CSV> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards();
+    List<CsvResponse> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards();
 }

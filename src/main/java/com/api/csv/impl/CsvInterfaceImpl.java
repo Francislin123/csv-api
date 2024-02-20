@@ -1,5 +1,6 @@
 package com.api.csv.impl;
 
+import com.api.csv.controller.response.CsvResponse;
 import com.api.csv.repository.model.CSV;
 import com.api.csv.repository.CsvRepository;
 import jakarta.annotation.PostConstruct;
@@ -17,10 +18,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Slf4j
@@ -90,13 +92,27 @@ public class CsvInterfaceImpl implements CsvInterface {
     }
 
     @Override
-    public List<CSV> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
-        return csvRepository.findAll().stream().filter(csv -> csv.getListValues().contains("yes")).toList();
+    public List<CsvResponse> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
+
+        List<CSV> yes = csvRepository.findAll().stream().filter(csv -> csv.getListValues().contains("yes")).toList();
+
+        List<CSV> duplicates = getDuplicates(yes);
+
+        return null;
     }
 
     private static File getFile() {
         String filename = "moviestes.xlsx";
         Path pathToFile = Paths.get(filename);
         return pathToFile.toAbsolutePath().toFile();
+    }
+
+    private static List<CSV> getDuplicates(final List<CSV> csvList) {
+       return csvList.stream()
+                .collect(Collectors.groupingBy(CSV::getListValues))
+                .entrySet().stream()
+                .filter(e-> e.getValue().size() > 1)
+                .flatMap(e->e.getValue().stream())
+                .collect(Collectors.toList());
     }
 }
