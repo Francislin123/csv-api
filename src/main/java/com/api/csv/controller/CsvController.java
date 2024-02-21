@@ -1,5 +1,6 @@
 package com.api.csv.controller;
 
+import com.api.csv.controller.response.CsvResponse;
 import com.api.csv.impl.CsvInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class CsvController {
     private CsvInterface csvInterface;
 
     @RequestMapping(value = "/statics", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
+    public ResponseEntity<CsvResponse> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
         return new ResponseEntity<>(csvInterface.getTheProducerWithLongestGapBetweenTwoConsecutiveAwards(), HttpStatus.OK);
     }
 }
