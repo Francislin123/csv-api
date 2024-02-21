@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class Min {
     public String producer;
-    public int interval;
-    public int previousWin;
-    public int followingWin;
+    public double interval;
+    public double previousWin;
+    public double followingWin;
 }
