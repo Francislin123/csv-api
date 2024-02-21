@@ -37,7 +37,7 @@ public class CsvInterfaceImpl implements CsvInterface {
     private CsvRepository csvRepository;
 
     @PostConstruct
-    public void csvOutputFileXSSFWorkbook() {
+    public void csvOutputFileXSSFWorkbook() throws Exception {
         try {
 
         final File file = getFile();
@@ -97,7 +97,7 @@ public class CsvInterfaceImpl implements CsvInterface {
 
         } catch (IOException | InvalidFormatException e) {
             log.trace("Exception message: " + e.getMessage());
-            throw new RuntimeException(e);
+            throw new Exception(e);
         }
     }
 
