@@ -91,15 +91,20 @@ public class CsvInterfaceImpl implements CsvInterface {
             i++;
         }
 
+            log.info("Saving in repository");
+
         this.csvRepository.saveAll(csvList);
 
         } catch (IOException | InvalidFormatException e) {
+            log.trace("Exception message: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
     @Override
     public CsvResponse getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
+
+        log.info("init to statistics");
 
         final List<CSV> yes =
                 this.csvRepository.findAll().stream().filter(csv -> csv.getListValues().contains("yes")).toList();
@@ -145,21 +150,27 @@ public class CsvInterfaceImpl implements CsvInterface {
             j++;
         }
 
+        log.info("Result final to statistics");
+
         return CsvResponse.builder().min(minList).max(maxList).build();
     }
 
     private File getFile() {
+        log.info("Reading the file that is in the root of the project");
         final String nameCSV = "moviestes.xlsx";
         final Path pathToFile = Paths.get(nameCSV);
         return pathToFile.toAbsolutePath().toFile();
     }
 
     private List<CSV> getDuplicates(final List<CSV> csvList) {
+        log.info("Duplicate list started");
         return csvList.stream().collect(Collectors.groupingBy(CSV::getListValues)).entrySet().stream()
                 .filter(e -> e.getValue().size() > 1).flatMap(e -> e.getValue().stream()).collect(Collectors.toList());
     }
 
     private List<ResultInterval> findFasterMin(final List<CSV> movies) {
+
+        log.info("Begin findFasterMin");
 
         final List<ResultInterval> resultInterval = new ArrayList<>();
 
@@ -185,10 +196,15 @@ public class CsvInterfaceImpl implements CsvInterface {
                 }
             }
         }
+
+        log.info("End findFasterMin");
+
         return resultInterval;
     }
 
     private List<ResultInterval> findLargestRangeMax(final List<CSV> movies) {
+
+        log.info("Begin findLargestRangeMax");
 
         final List<ResultInterval> resultMaxInterval = new ArrayList<>();
 
@@ -214,6 +230,9 @@ public class CsvInterfaceImpl implements CsvInterface {
                 }
             }
         }
+
+        log.info("End findLargestRangeMax");
+
         return resultMaxInterval;
     }
 }
