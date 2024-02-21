@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(CsvController.URI_CLIENT)
+@RequestMapping(CsvController.URI_CSV)
 public class CsvController {
 
-    public static final String URI_CLIENT = "/assets/csv";
+    public static final String URI_CSV = "/csv";
 
     @Autowired
     private CsvInterface csvInterface;

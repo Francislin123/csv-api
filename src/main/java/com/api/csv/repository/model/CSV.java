@@ -22,19 +22,15 @@ public class CSV {
     @Column(name = "col_list_values")
     private List<String> listValues;
 
-    @Column(name = "col_wins")
-    private Boolean wins;
-
     @Tolerate
     public CSV() {
         // Method default for hibernate
     }
 
     @Builder
-    public CSV(Long id, Double year,List<String> listValues, Boolean wins) {
+    public CSV(Long id, Double year,List<String> listValues) {
         this.id = id;
         this.year = year;
         this.listValues = listValues;
-        this.wins = wins;
     }
 }

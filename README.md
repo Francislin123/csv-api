@@ -21,7 +21,8 @@
 - -Dspring.profiles.active=local
 
 ### Documentation for testing api
+- H2 Database URL(http://localhost:8080/api/v1/h2/login.jsp?jsessionid=a1198c3d53a23d032976c4314f888286) pass:sa
 - To test the listing/statistics
 - The xlsx/csv file is in the root of the project (moviestes.xlsx)
 - Api URI(http://localhost:8080/api/v1/assets/csv/statics) 
-- curl --location 'http://localhost:8080/api/v1/assets/csv/statics' \--header 'Content-Type: application/json'
+- curl --location 'http://localhost:8080/api/v1/csv/statics' \--header 'Content-Type: application/json'

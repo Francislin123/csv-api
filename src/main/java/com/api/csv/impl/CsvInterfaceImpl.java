@@ -48,7 +48,6 @@ public class CsvInterfaceImpl implements CsvInterface {
         List<CSV> csvList = new ArrayList<>();
 
         // Create Workbook instance holding reference to .xlsx file
-
         XSSFWorkbook wb = new XSSFWorkbook(file);
         XSSFSheet ws = wb.getSheetAt(0);
 
@@ -96,35 +95,30 @@ public class CsvInterfaceImpl implements CsvInterface {
     @Override
     public CsvResponse getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
 
-        List<CSV> yes = csvRepository.findAll().stream().filter(csv -> csv.getListValues().contains("yes")).toList();
+        final List<CSV> yes =
+                this.csvRepository.findAll().stream().filter(csv -> csv.getListValues().contains("yes")).toList();
 
-        List<CSV> duplicates = getDuplicates(yes);
+        final List<CSV> duplicates = this.getDuplicates(yes);
 
-        for (CSV csv : duplicates) {
-            csv.setWins(true);
-        }
+        final List<ResultInterval> resultIntervalFindFaster = this.findFasterMin(duplicates);
 
-        List<ResultInterval> resultIntervalFindFaster = findFaster(duplicates);
+        final List<ResultInterval> resultIntervalFindLargestRange = this.findLargestRangeMax(duplicates);
 
-        List<ResultInterval> resultIntervalFindLargestRange = findLargestRange(duplicates);
-
-        List<Min> minList = new ArrayList<>();
-        List<Max> maxList = new ArrayList<>();
+        final List<Min> minList = new ArrayList<>();
+        final List<Max> maxList = new ArrayList<>();
 
         int i = 0;
 
         while (i < resultIntervalFindFaster.size()) {
 
-            ResultInterval resultIntervalParse = resultIntervalFindFaster.get(i);
+            final ResultInterval resultIntervalParse = resultIntervalFindFaster.get(i);
 
-            Min min = Min.builder()
+            minList.add(Min.builder()
                     .producer(resultIntervalParse.producer)
                     .interval(resultIntervalParse.interval)
-                    .previousWin(resultIntervalParse.followingWin)
-                    .followingWin(resultIntervalParse.previousWin)
-                    .build();
-
-            minList.add(min);
+                    .previousWin(resultIntervalParse.previousWin)
+                    .followingWin(resultIntervalParse.followingWin)
+                    .build());
 
             i++;
         }
@@ -133,16 +127,14 @@ public class CsvInterfaceImpl implements CsvInterface {
 
         while (j < resultIntervalFindLargestRange.size()) {
 
-            ResultInterval resultIntervalParse = resultIntervalFindLargestRange.get(j);
+            final ResultInterval resultIntervalParse = resultIntervalFindLargestRange.get(j);
 
-            Max max = Max.builder()
+            maxList.add(Max.builder()
                     .producer(resultIntervalParse.producer)
                     .interval(resultIntervalParse.interval)
-                    .previousWin(resultIntervalParse.followingWin)
-                    .followingWin(resultIntervalParse.previousWin)
-                    .build();
-
-            maxList.add(max);
+                    .previousWin(resultIntervalParse.previousWin)
+                    .followingWin(resultIntervalParse.followingWin)
+                    .build());
 
             j++;
         }
@@ -150,71 +142,69 @@ public class CsvInterfaceImpl implements CsvInterface {
         return CsvResponse.builder().min(minList).max(maxList).build();
     }
 
-    private static File getFile() {
-        String filename = "moviestes.xlsx";
-        Path pathToFile = Paths.get(filename);
+    private File getFile() {
+        final String nameCSV = "moviestes.xlsx";
+        final Path pathToFile = Paths.get(nameCSV);
         return pathToFile.toAbsolutePath().toFile();
     }
 
-    private static List<CSV> getDuplicates(final List<CSV> csvList) {
+    private List<CSV> getDuplicates(final List<CSV> csvList) {
         return csvList.stream().collect(Collectors.groupingBy(CSV::getListValues)).entrySet().stream()
                 .filter(e -> e.getValue().size() > 1).flatMap(e -> e.getValue().stream()).collect(Collectors.toList());
     }
 
-    private List<ResultInterval> findFaster(List<CSV> movies) {
+    private List<ResultInterval> findFasterMin(final List<CSV> movies) {
 
-        List<ResultInterval> resultInterval = new ArrayList<>();
+        final List<ResultInterval> resultInterval = new ArrayList<>();
 
         double smallestRangeParse = Integer.MAX_VALUE;
 
         for (int i = 0; i < movies.size() - 1; i++) {
 
-            CSV movieCurrent = movies.get(i);
-            CSV movieNext = movies.get(i + 1);
+            final CSV movieCurrent = movies.get(i);
+            final CSV movieNext = movies.get(i + 1);
 
-            if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))
-                    && movieCurrent.getWins() && movieNext.getWins()) {
+            if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))) {
 
-                double interval = movieNext.getYear() - movieCurrent.getYear();
+                final double interval = movieNext.getYear() - movieCurrent.getYear();
 
                 if (interval < smallestRangeParse) {
                     smallestRangeParse = interval;
                     resultInterval.clear();
                     resultInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieNext.getYear(), movieCurrent.getYear()));
+                            interval, movieCurrent.getYear(), movieNext.getYear()));
                 } else if (interval == smallestRangeParse) {
                     resultInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieNext.getYear(), movieCurrent.getYear()));
+                            interval, movieCurrent.getYear(), movieNext.getYear()));
                 }
             }
         }
         return resultInterval;
     }
 
-    private List<ResultInterval> findLargestRange(List<CSV> movies) {
+    private List<ResultInterval> findLargestRangeMax(final List<CSV> movies) {
 
-        List<ResultInterval> resultMaxInterval = new ArrayList<>();
+        final List<ResultInterval> resultMaxInterval = new ArrayList<>();
 
         double smallestRangeParse = Integer.MIN_VALUE;
 
         for (int i = 0; i < movies.size() - 1; i++) {
 
-            CSV movieCurrent = movies.get(i);
-            CSV movieNext = movies.get(i + 1);
+            final CSV movieCurrent = movies.get(i);
+            final CSV movieNext = movies.get(i + 1);
 
-            if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))
-                    && movieCurrent.getWins() && movieNext.getWins()) {
+            if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))) {
 
-                double interval = movieNext.getYear() - movieCurrent.getYear();
+                final double interval = movieNext.getYear() - movieCurrent.getYear();
 
                 if (interval > smallestRangeParse) {
                     smallestRangeParse = interval;
                     resultMaxInterval.clear();
-                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2), interval,
-                            movieNext.getYear(), movieCurrent.getYear()));
+                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
+                            interval, movieCurrent.getYear(), movieNext.getYear()));
                 } else if (interval == smallestRangeParse) {
-                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2), interval,
-                            movieNext.getYear(), movieCurrent.getYear()));
+                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
+                            interval, movieCurrent.getYear(), movieNext.getYear()));
                 }
             }
         }
