@@ -37,7 +37,8 @@ public class CsvInterfaceImpl implements CsvInterface {
     private CsvRepository csvRepository;
 
     @PostConstruct
-    public void csvOutputFileXSSFWorkbook() throws IOException, InvalidFormatException {
+    public void csvOutputFileXSSFWorkbook() {
+        try {
 
         final File file = getFile();
 
@@ -49,6 +50,7 @@ public class CsvInterfaceImpl implements CsvInterface {
 
         // Create Workbook instance holding reference to .xlsx file
         XSSFWorkbook wb = new XSSFWorkbook(file);
+
         XSSFSheet ws = wb.getSheetAt(0);
 
         log.info("Reading excel");
@@ -90,6 +92,10 @@ public class CsvInterfaceImpl implements CsvInterface {
         }
 
         this.csvRepository.saveAll(csvList);
+
+        } catch (IOException | InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
