@@ -21,6 +21,6 @@ public class CsvController {
 
     @RequestMapping(value = "/statics", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CsvResponse> getTheProducerWithLongestGapBetweenTwoConsecutiveAwards() {
-        return new ResponseEntity<>(csvInterface.getTheProducerWithLongestGapBetweenTwoConsecutiveAwards(), HttpStatus.OK);
+        return new ResponseEntity<>(csvInterface.getTheProducerWithLongestGapBetweenTwoConsecutiveAwards(), HttpStatus.ACCEPTED);
     }
 }

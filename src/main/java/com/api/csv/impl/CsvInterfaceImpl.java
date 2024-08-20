@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,60 +39,60 @@ public class CsvInterfaceImpl implements CsvInterface {
     public void csvOutputFileXSSFWorkbook() throws Exception {
         try {
 
-        final File file = getFile();
+            final File file = getFile();
 
-        List<String> listStrings = new ArrayList<>();
-        String listString;
-        final List<Double> listIntegers = new ArrayList<>();
+            List<String> listStrings = new ArrayList<>();
+            String listString;
+            final List<Double> listIntegers = new ArrayList<>();
 
-        List<CSV> csvList = new ArrayList<>();
+            List<CSV> csvList = new ArrayList<>();
 
-        // Create Workbook instance holding reference to .xlsx file
-        XSSFWorkbook wb = new XSSFWorkbook(file);
+            // Create Workbook instance holding reference to .xlsx file
+            XSSFWorkbook wb = new XSSFWorkbook(file);
 
-        XSSFSheet ws = wb.getSheetAt(0);
+            XSSFSheet ws = wb.getSheetAt(0);
 
-        log.info("Reading excel");
+            log.info("Reading excel");
 
-        for (Row row : ws) {
-            Iterator<Cell> cellIterator = row.cellIterator();
-            if (cellIterator.hasNext()) {
-                do {
-                    Cell cell = cellIterator.next();
-                    switch (cell.getCellType()) {
-                        case STRING -> {
-                            listString = cell.getStringCellValue();
-                            listStrings.add(listString);
-                            List<String> list = Arrays.asList("year", "title", "studios", "producers", "winner");
-                            listStrings.removeAll(list);
+            for (Row row : ws) {
+                Iterator<Cell> cellIterator = row.cellIterator();
+                if (cellIterator.hasNext()) {
+                    do {
+                        Cell cell = cellIterator.next();
+                        switch (cell.getCellType()) {
+                            case STRING -> {
+                                listString = cell.getStringCellValue();
+                                listStrings.add(listString);
+                                List<String> list = Arrays.asList("year", "title", "studios", "producers", "winner");
+                                listStrings.removeAll(list);
+                            }
+                            case NUMERIC -> {
+
+                                listIntegers.add(cell.getNumericCellValue());
+
+                                listStrings = new ArrayList<>();
+
+                                CSV build = CSV.builder().listValues(listStrings).build();
+
+                                csvList.add(build);
+                            }
                         }
-                        case NUMERIC -> {
-
-                            listIntegers.add(cell.getNumericCellValue());
-
-                            listStrings = new ArrayList<>();
-
-                            CSV build = CSV.builder().listValues(listStrings).build();
-
-                            csvList.add(build);
-                        }
-                    }
-                } while (cellIterator.hasNext());
+                    } while (cellIterator.hasNext());
+                }
             }
-        }
 
-        int i = 0;
+            int i = 0;
 
-        while (i < csvList.size()) {
-            Double v = listIntegers.get(i);
-            CSV csvFinal = csvList.get(i);
-            csvFinal.setYear(v);
-            i++;
-        }
+            while (i < csvList.size()) {
+                Double v = listIntegers.get(i);
+                CSV csvFinal = csvList.get(i);
+                csvFinal.setYear(v);
+                i++;
+            }
 
             log.info("Saving in repository");
 
-        this.csvRepository.saveAll(csvList);
+            this.csvRepository.saveAll(csvList);
 
         } catch (IOException | InvalidFormatException e) {
             log.trace("Exception message: " + e.getMessage());
@@ -122,15 +121,11 @@ public class CsvInterfaceImpl implements CsvInterface {
 
         while (i < resultIntervalFindFaster.size()) {
 
-            final ResultInterval resultIntervalParse = resultIntervalFindFaster.get(i);
+            final var resultIntervalParse = resultIntervalFindFaster.get(i);
 
-            minList.add(Min.builder()
-                    .producer(resultIntervalParse.producer)
-                    .interval(resultIntervalParse.interval)
-                    .previousWin(resultIntervalParse.previousWin)
-                    .followingWin(resultIntervalParse.followingWin)
-                    .build());
-
+            minList.add(Min.builder().producer(
+                    resultIntervalParse.producer).interval(resultIntervalParse.interval).previousWin(
+                            resultIntervalParse.previousWin).followingWin(resultIntervalParse.followingWin).build());
             i++;
         }
 
@@ -138,15 +133,11 @@ public class CsvInterfaceImpl implements CsvInterface {
 
         while (j < resultIntervalFindLargestRange.size()) {
 
-            final ResultInterval resultIntervalParse = resultIntervalFindLargestRange.get(j);
+            final var resultIntervalParse = resultIntervalFindLargestRange.get(j);
 
-            maxList.add(Max.builder()
-                    .producer(resultIntervalParse.producer)
-                    .interval(resultIntervalParse.interval)
-                    .previousWin(resultIntervalParse.previousWin)
-                    .followingWin(resultIntervalParse.followingWin)
-                    .build());
-
+            maxList.add(Max.builder().producer(resultIntervalParse.producer).interval(
+                    resultIntervalParse.interval).previousWin(
+                            resultIntervalParse.previousWin).followingWin(resultIntervalParse.followingWin).build());
             j++;
         }
 
@@ -157,15 +148,16 @@ public class CsvInterfaceImpl implements CsvInterface {
 
     private File getFile() {
         log.info("Reading the file that is in the root of the project");
-        final String nameCSV = "moviestes.xlsx";
-        final Path pathToFile = Paths.get(nameCSV);
+        final var nameCSV = "moviestes.xlsx";
+        final var pathToFile = Paths.get(nameCSV);
         return pathToFile.toAbsolutePath().toFile();
     }
 
     private List<CSV> getDuplicates(final List<CSV> csvList) {
         log.info("Duplicate list started");
-        return csvList.stream().collect(Collectors.groupingBy(CSV::getListValues)).entrySet().stream()
-                .filter(e -> e.getValue().size() > 1).flatMap(e -> e.getValue().stream()).collect(Collectors.toList());
+        return csvList.stream().collect(Collectors.groupingBy(CSV::getListValues)).entrySet()
+                .stream().filter(e -> e.getValue().size() > 1).flatMap(e -> e.getValue()
+                        .stream()).collect(Collectors.toList());
     }
 
     private List<ResultInterval> findFasterMin(final List<CSV> movies) {
@@ -183,16 +175,16 @@ public class CsvInterfaceImpl implements CsvInterface {
 
             if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))) {
 
-                final double interval = movieNext.getYear() - movieCurrent.getYear();
+                final var interval = movieNext.getYear() - movieCurrent.getYear();
 
                 if (interval < smallestRangeParse) {
                     smallestRangeParse = interval;
                     resultInterval.clear();
-                    resultInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieCurrent.getYear(), movieNext.getYear()));
+                    resultInterval.add(new ResultInterval(
+                            movieCurrent.getListValues().get(2), interval, movieCurrent.getYear(), movieNext.getYear()));
                 } else if (interval == smallestRangeParse) {
-                    resultInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieCurrent.getYear(), movieNext.getYear()));
+                    resultInterval.add(new ResultInterval(
+                            movieCurrent.getListValues().get(2), interval, movieCurrent.getYear(), movieNext.getYear()));
                 }
             }
         }
@@ -217,16 +209,16 @@ public class CsvInterfaceImpl implements CsvInterface {
 
             if (movieCurrent.getListValues().get(2).equals(movieNext.getListValues().get(2))) {
 
-                final double interval = movieNext.getYear() - movieCurrent.getYear();
+                final var interval = movieNext.getYear() - movieCurrent.getYear();
 
                 if (interval > smallestRangeParse) {
                     smallestRangeParse = interval;
                     resultMaxInterval.clear();
-                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieCurrent.getYear(), movieNext.getYear()));
+                    resultMaxInterval.add(new ResultInterval(
+                            movieCurrent.getListValues().get(2), interval, movieCurrent.getYear(), movieNext.getYear()));
                 } else if (interval == smallestRangeParse) {
-                    resultMaxInterval.add(new ResultInterval(movieCurrent.getListValues().get(2),
-                            interval, movieCurrent.getYear(), movieNext.getYear()));
+                    resultMaxInterval.add(new ResultInterval(
+                            movieCurrent.getListValues().get(2), interval, movieCurrent.getYear(), movieNext.getYear()));
                 }
             }
         }
