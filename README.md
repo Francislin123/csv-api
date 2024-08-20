@@ -27,7 +27,7 @@
 - Api URI(http://localhost:8080/api/v1/assets/csv/statics) 
 - curl --location 'http://localhost:8080/api/v1/csv/statics' \--header 'Content-Type: application/json'
 
-### Aws Solution Architecture
+### Cloud Foundry Solution Architecture
 ![Captura de Tela 2019-05-12 às 15 18 49](https://res.cloudinary.com/duep7y7ve/image/upload/v1724192539/Captura_de_Tela_2024-08-20_a%CC%80s_18.39.27_phexlo.png)
 
 - Cloud Foundry é uma plataforma como serviço (PaaS) de código aberto que permite aos desenvolvedores construir, testar, implantar e escalar aplicativos rapidamente.
