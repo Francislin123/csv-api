@@ -17,7 +17,7 @@ public class CSV {
     private Long id;
 
     @Column(name = "col_year")
-    private Double year;
+    private Long year;
 
     @Column(name = "col_list_values")
     private List<String> listValues;
@@ -28,7 +28,7 @@ public class CSV {
     }
 
     @Builder
-    public CSV(Long id, Double year,List<String> listValues) {
+    public CSV(Long id, Long year,List<String> listValues) {
         this.id = id;
         this.year = year;
         this.listValues = listValues;
